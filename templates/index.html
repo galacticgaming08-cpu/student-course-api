@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Campus Connect</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body data-page="dashboard">
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark">CC</span>
+      <div>
+        <strong>Campus Connect</strong>
+        <small>Student Information System</small>
+      </div>
+    </div>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/students">Students</a>
+      <a href="/courses">Courses</a>
+      <a href="/enrollment">Enrollment</a>
+      <a href="/announcements">Announcements</a>
+    </nav>
+  </header>
 
+  <main>
+    <section class="page-head">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="muted">Integrated Student Enrollment and Information System</p>
+      </div>
+      <button type="button" id="refresh-btn" class="btn-outline">Refresh</button>
+    </section>
+
+    <section class="cards" id="stat-cards">
+      <article class="card"><span>Total students</span><strong data-stat="total_students">-</strong><small>Registered student records</small></article>
+      <article class="card"><span>Total courses</span><strong data-stat="total_courses">-</strong><small>Courses in the catalog</small></article>
+      <article class="card"><span>Total enrollments</span><strong data-stat="total_enrollments">-</strong><small>All enrollment records</small></article>
+      <article class="card"><span>Available courses</span><strong data-stat="available_courses">-</strong><small>Courses with open slots</small></article>
+    </section>
+
+    <div class="grid-2">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Recent enrollment activity</h2>
+            <p>Latest records returned by GET /api/enrollments</p>
+          </div>
+          <a class="link" href="/enrollment">View all &rarr;</a>
+        </div>
+        <table id="recent-table">
+          <thead>
+            <tr><th>Student</th><th>Course</th><th>Date</th><th>Status</th></tr>
+          </thead>
+          <tbody id="recent-body">
+            <tr><td colspan="4">Loading...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Announcements</h2>
+          <a class="link" href="/announcements">Manage &rarr;</a>
+        </div>
+        <div id="announcement-list"><p class="empty">Loading...</p></div>
+        <button type="button" class="wide" data-open="announcement-dialog">Post announcement</button>
+      </section>
+    </div>
+
+    <div class="action-row">
+      <button type="button" class="action-btn dark" data-open="student-dialog"><span>Add student</span><span>+</span></button>
+      <button type="button" class="action-btn light" data-open="enroll-dialog"><span>Quick enroll student</span><span>+</span></button>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>How the integration works</h2>
+        <p>Live: <code id="live-url"></code></p>
+      </div>
+      <div class="tiles">
+        <article class="tile">
+          <strong>Frontend (Base44 portal)</strong>
+          <p>React pages send HTTP requests with fetch() to the API base URL.</p>
+        </article>
+        <article class="tile">
+          <strong>Flask REST API</strong>
+          <p>Python routes read and write records, then reply with JSON.</p>
+        </article>
+        <article class="tile">
+          <strong>SQLite database</strong>
+          <p>Students, courses, enrollments and announcements are stored in database.db.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add student -->
+  <dialog id="student-dialog">
+    <form id="student-form" class="dialog-form">
+      <h2>Add student</h2>
+      <label>First name<input name="first_name" required /></label>
+      <label>Last name<input name="last_name" required /></label>
+      <label>Email<input name="email" type="email" required /></label>
+      <label>Program<input name="program" placeholder="BS Information Technology" required /></label>
+      <label>Year level
+        <select name="year_level" required>
+          <option>1st Year</option><option>2nd Year</option><option>3rd Year</option><option>4th Year</option>
+        </select>
+      </label>
+      <label>Contact number<input name="contact_number" /></label>
+      <p class="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn-outline" data-close>Cancel</button>
+        <button type="submit">Save student</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Quick enroll -->
+  <dialog id="enroll-dialog">
+    <form id="enroll-form" class="dialog-form">
+      <h2>Quick enroll student</h2>
+      <label>Student<select name="student_id" id="enroll-student" required></select></label>
+      <label>Course<select name="course_id" id="enroll-course" required></select></label>
+      <p class="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn-outline" data-close>Cancel</button>
+        <button type="submit">Enroll</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Post announcement -->
+  <dialog id="announcement-dialog">
+    <form id="announcement-form" class="dialog-form">
+      <h2>Post announcement</h2>
+      <label>Title<input name="title" required /></label>
+      <label>Message<textarea name="content" rows="4" required></textarea></label>
+      <label>Author<input name="author" value="Administrator" required /></label>
+      <p class="form-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn-outline" data-close>Cancel</button>
+        <button type="submit">Post</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="{{ url_for('static', filename='javascript/script.js') }}"></script>
+</body>
+</html>
